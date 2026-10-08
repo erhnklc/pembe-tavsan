@@ -1,0 +1,15 @@
+{
+  "name": "Pembe Tavşan",
+  "short_name": "Pembe Tavşan",
+  "description": "Çocuklar için oyunla İngilizce öğrenme",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#ffe0ee",
+  "theme_color": "#ff8fc0",
+  "lang": "tr",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+  ]
+}
