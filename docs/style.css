@@ -189,19 +189,23 @@ main {
 .parent-actions { display: grid; gap: 10px; width: 100%; justify-items: center; }
 .big-btn.gray { background: #adb5bd; box-shadow: 0 8px 0 rgba(0, 0, 0, .15); }
 
-/* Oyun: yazılı kelime ve başparmakla kolay basılan büyük dinle butonu */
-#game { justify-content: flex-start; padding-top: 4px; gap: 14px; }
+/* Oyun: her şey ekranın tam ortasında */
+#game { justify-content: center; gap: 16px; }
 .prompt-word {
-  font-size: clamp(44px, 14vw, 72px); font-weight: 700; color: var(--pink-700);
-  line-height: 1.1; min-height: 1.1em; text-shadow: 0 3px 0 rgba(255, 255, 255, .9);
+  display: inline-flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
+  min-height: 1.4em; padding: 8px 28px 10px;
+  font-size: clamp(40px, 12vw, 64px); font-weight: 600; letter-spacing: .06em;
+  color: #fff; background: linear-gradient(135deg, #b86bff, #ff5fa2);
+  border: 5px solid #fff; border-radius: 999px;
+  box-shadow: 0 8px 0 rgba(120, 50, 190, .28);
 }
-.listen-dock {
-  margin-top: auto; position: sticky; bottom: 0; width: 100%;
-  display: flex; justify-content: center;
-  padding: 14px 0 max(10px, env(safe-area-inset-bottom));
-  background: linear-gradient(to bottom, transparent, var(--pink-50) 35%);
-}
+.echo { font-size: .5em; letter-spacing: 0; white-space: nowrap; }
+.echo.bump { animation: echoPop .45s ease-out; }
+.en .echo { color: var(--pink-500); }
+.listen-dock { width: 100%; display: flex; justify-content: center; }
 .listen-dock .big-btn, #repeatLearn {
   min-height: 76px; font-size: clamp(24px, 6.5vw, 32px); max-width: 520px;
 }
 #repeatLearn { width: 100%; }
+
+@keyframes echoPop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.35); } 100% { transform: scale(1); opacity: 1; } }

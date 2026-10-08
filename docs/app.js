@@ -107,7 +107,24 @@ function playFile(name) {
   player.play().catch(() => {});
 }
 
+// Aynı kelime her çalındığında ekrandaki kelimeye bir 🔊 eklenir: tekrar edildiği görünür.
+let echoCount = 0;
+function resetEcho() {
+  echoCount = 0;
+  ['promptEcho', 'learnEcho'].forEach((id) => { $(id).textContent = ''; });
+}
+function bumpEcho() {
+  echoCount += 1;
+  const id = screenNow === 'game' ? 'promptEcho' : 'learnEcho';
+  const el = $(id);
+  el.textContent = '🔊'.repeat(Math.min(echoCount, 6));
+  el.classList.remove('bump');
+  void el.offsetWidth;
+  el.classList.add('bump');
+}
+
 function playWord(item) {
+  bumpEcho();
   if (AUDIO_IDS.has(item.id)) playFile(item.id);
   else { stopAudio(); speakFallback(item.en); }
 }
@@ -172,6 +189,7 @@ function renderCard(autoplay) {
   $('learnVisual').innerHTML = visualHTML(item);
   $('learnEn').textContent = item.en;
   $('learnTr').textContent = item.tr;
+  resetEcho();
   $('dots').innerHTML = topic.items.map((_, i) => `<i class="${i === cardIndex ? 'on' : ''}"></i>`).join('');
   if (autoplay) playWord(item);
 }
@@ -206,6 +224,7 @@ function nextRound() {
   if (game.round >= game.picked.length) return finishGame();
   current = game.picked[game.round];
   game.missed = false;
+  resetEcho();
   $('promptWord').textContent = current.en;
   const others = shuffle(topic.items.filter((i) => i.id !== current.id)).slice(0, 2);
   const options = shuffle([current, ...others]);
