@@ -199,13 +199,40 @@ main {
   border: 5px solid #fff; border-radius: 999px;
   box-shadow: 0 8px 0 rgba(120, 50, 190, .28);
 }
-.echo { font-size: .5em; letter-spacing: 0; white-space: nowrap; }
-.echo.bump { animation: echoPop .45s ease-out; }
-.en .echo { color: var(--pink-500); }
-.listen-dock { width: 100%; display: flex; justify-content: center; }
+.en .listen-dock { width: 100%; display: flex; justify-content: center; }
 .listen-dock .big-btn, #repeatLearn {
   min-height: 76px; font-size: clamp(24px, 6.5vw, 32px); max-width: 520px;
 }
 #repeatLearn { width: 100%; }
 
-@keyframes echoPop { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.35); } 100% { transform: scale(1); opacity: 1; } }
+
+/* Kelime animasyonları: her çalışta bir sonrakine geçer */
+.prompt-word, .en { transform-origin: center; }
+.w-bounce  { animation: wBounce .6s ease-out; }
+.w-jelly   { animation: wJelly .7s ease-out; }
+.w-flip    { animation: wFlip .7s ease-in-out; }
+.w-rainbow { animation: wRainbow .9s ease-in-out; }
+
+@keyframes wBounce {
+  0% { transform: translateY(0) scale(1, 1); }
+  30% { transform: translateY(-26px) scale(.92, 1.12); }
+  55% { transform: translateY(0) scale(1.15, .85); }
+  75% { transform: translateY(-9px) scale(1, 1); }
+  100% { transform: translateY(0) scale(1, 1); }
+}
+@keyframes wJelly {
+  0% { transform: scale(1, 1); }
+  25% { transform: scale(1.3, .72); }
+  50% { transform: scale(.82, 1.2); }
+  75% { transform: scale(1.12, .92); }
+  100% { transform: scale(1, 1); }
+}
+@keyframes wFlip {
+  0% { transform: perspective(500px) rotateY(0); }
+  100% { transform: perspective(500px) rotateY(360deg); }
+}
+@keyframes wRainbow {
+  0% { filter: hue-rotate(0deg); transform: scale(1); }
+  50% { filter: hue-rotate(180deg); transform: scale(1.18); }
+  100% { filter: hue-rotate(360deg); transform: scale(1); }
+}

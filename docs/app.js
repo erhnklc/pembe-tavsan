@@ -107,20 +107,23 @@ function playFile(name) {
   player.play().catch(() => {});
 }
 
-// Aynı kelime her çalındığında ekrandaki kelimeye bir 🔊 eklenir: tekrar edildiği görünür.
+// Aynı kelime her çalındığında kelimenin kendisi farklı bir animasyon yapar: tekrar edildiği anlaşılır.
+const WORD_ANIMS = ['w-bounce', 'w-jelly', 'w-flip', 'w-rainbow'];
 let echoCount = 0;
+const wordEl = () => $(screenNow === 'game' ? 'promptWord' : 'learnEn');
+
 function resetEcho() {
   echoCount = 0;
-  ['promptEcho', 'learnEcho'].forEach((id) => { $(id).textContent = ''; });
+  ['promptWord', 'learnEn'].forEach((id) => $(id).classList.remove(...WORD_ANIMS));
 }
+
 function bumpEcho() {
+  const el = wordEl();
+  const cls = WORD_ANIMS[echoCount % WORD_ANIMS.length];
   echoCount += 1;
-  const id = screenNow === 'game' ? 'promptEcho' : 'learnEcho';
-  const el = $(id);
-  el.textContent = '🔊'.repeat(Math.min(echoCount, 6));
-  el.classList.remove('bump');
-  void el.offsetWidth;
-  el.classList.add('bump');
+  el.classList.remove(...WORD_ANIMS);
+  void el.offsetWidth; // animasyonu baştan başlat
+  el.classList.add(cls);
 }
 
 function playWord(item) {
