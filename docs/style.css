@@ -166,3 +166,25 @@ main {
 @media (prefers-reduced-motion: reduce) {
   * { animation: none !important; }
 }
+
+/* Bozuk ses bildirimi / ebeveyn ekranı */
+.flag-btn {
+  background: #fff; border-radius: 999px; padding: 8px 16px; font-size: 16px; font-weight: 600;
+  box-shadow: 0 4px 0 rgba(214, 51, 108, .18); opacity: .85;
+}
+.parent-link {
+  margin-top: 12px; background: transparent; font-size: 14px; opacity: .45; padding: 10px;
+}
+.screen.top { justify-content: flex-start; padding-top: 8px; }
+.screen h2 { margin: 6px 0 0; font-size: clamp(22px, 5vw, 28px); color: var(--pink-700); }
+.note { margin: 0; font-size: 16px; opacity: .8; }
+.clip-list { list-style: none; padding: 0; margin: 0; width: 100%; display: grid; gap: 8px; }
+.clip-list li {
+  display: flex; align-items: center; gap: 8px; background: #fff; border-radius: 18px;
+  padding: 8px 12px; text-align: left; box-shadow: 0 4px 0 rgba(214, 51, 108, .12);
+}
+.clip-list li span { flex: 1; font-weight: 600; }
+.clip-list li small { font-weight: 400; opacity: .6; }
+.clip-list li button { background: var(--pink-50); border-radius: 12px; font-size: 22px; padding: 6px 12px; }
+.parent-actions { display: grid; gap: 10px; width: 100%; justify-items: center; }
+.big-btn.gray { background: #adb5bd; box-shadow: 0 8px 0 rgba(0, 0, 0, .15); }

@@ -63,7 +63,8 @@ const TOPICS = [
 ];
 
 const $ = (id) => document.getElementById(id);
-const screens = ['home', 'topic', 'learn', 'game', 'result'];
+const screens = ['home', 'topic', 'learn', 'game', 'parent', 'result'];
+const REPO_URL = 'https://github.com/erhnklc/pembe-tavsan';
 const ROUNDS = 5;
 
 let topic = null;
@@ -127,6 +128,7 @@ function show(name) {
   $('backBtn').hidden = name === 'home';
   $('title').textContent = (name === 'home' || !topic) ? 'Pembe Tavşan' : `${topic.emoji} ${topic.name}`;
   if (name === 'home') $('title').textContent = 'Pembe Tavşan';
+  if (name === 'parent') $('title').textContent = '👪 Ebeveyn';
   window.scrollTo(0, 0);
 }
 
@@ -135,7 +137,7 @@ function go(name) { screenNow = name; show(name); }
 
 $('backBtn').onclick = () => {
   stopAudio();
-  if (screenNow === 'topic') go('home');
+  if (screenNow === 'topic' || screenNow === 'parent') go('home');
   else if (screenNow === 'learn' || screenNow === 'game' || screenNow === 'result') go('topic');
 };
 
@@ -250,6 +252,105 @@ function finishGame() {
   burst('💖');
   setTimeout(() => playFile('aferin'), 300);
 }
+
+/* ---------- Bozuk ses bildirimi ---------- */
+// Bildirimler önce cihazda saklanır. Ebeveyn ekranından hazır doldurulmuş bir GitHub issue
+// olarak gönderilir (sunucu ya da anahtar gerekmez).
+const FILE_CLIPS = [
+  ['hosgeldin', 'Merhaba cümlesi (Türkçe)'], ['aferin', 'Aferin sana (Türkçe)'],
+  ...[...AUDIO_IDS].map((id) => [id, id]),
+];
+
+function loadReports() {
+  try { return JSON.parse(localStorage.getItem('soundReports')) || []; } catch { return []; }
+}
+function saveReports(list) {
+  try { localStorage.setItem('soundReports', JSON.stringify(list)); } catch { /* özel pencere vb. */ }
+}
+
+function reportKind(id) {
+  return (AUDIO_IDS.has(id) || id === 'hosgeldin' || id === 'aferin') ? 'ses dosyası' : 'tarayıcı sesi (üretilmiş dosya yok)';
+}
+
+function toggleReport(id) {
+  const list = loadReports();
+  const at = list.findIndex((r) => r.id === id);
+  if (at >= 0) list.splice(at, 1);
+  else list.push({ id, kind: reportKind(id), t: new Date().toISOString().slice(0, 16).replace('T', ' ') });
+  saveReports(list);
+  return at < 0;
+}
+
+function flash(btn, text) {
+  const old = btn.textContent;
+  btn.textContent = text;
+  setTimeout(() => { btn.textContent = old; }, 1200);
+}
+
+function flagCurrent(btn, id) {
+  if (!id) return;
+  flash(btn, toggleReport(id) ? '✅ Bildirildi' : '↩️ Geri alındı');
+}
+$('flagLearn').onclick = (e) => flagCurrent(e.currentTarget, topic && topic.items[cardIndex].id);
+$('flagGame').onclick = (e) => flagCurrent(e.currentTarget, current && current.id);
+
+function reportText() {
+  const list = loadReports();
+  if (!list.length) return '';
+  const lines = list.map((r) => `- ${r.id} (${r.kind}) · ${r.t}`);
+  return `Bozuk ses bildirimi:\n${lines.join('\n')}\n\nCihaz: ${navigator.userAgent}`;
+}
+
+function renderParent() {
+  const reported = new Set(loadReports().map((r) => r.id));
+  const clips = $('clipList');
+  clips.innerHTML = '';
+  FILE_CLIPS.forEach(([id, label]) => {
+    const li = document.createElement('li');
+    li.innerHTML = `<span>${label}</span>`;
+    const play = document.createElement('button');
+    play.textContent = '▶️';
+    play.setAttribute('aria-label', `${label} dinle`);
+    play.onclick = () => playFile(id);
+    const flag = document.createElement('button');
+    flag.textContent = reported.has(id) ? '🚩' : '⚑';
+    flag.setAttribute('aria-label', `${label} bozuk`);
+    flag.onclick = () => { toggleReport(id); renderParent(); };
+    li.append(play, flag);
+    clips.appendChild(li);
+  });
+  const list = loadReports();
+  $('reportCount').textContent = list.length;
+  $('reportList').innerHTML = list.length
+    ? list.map((r) => `<li><span>${r.id} <small>${r.kind}</small></span></li>`).join('')
+    : '<li><span>Henüz bildirim yok</span></li>';
+}
+
+function openParent() { stopAudio(); renderParent(); $('parentMsg').textContent = ''; go('parent'); }
+
+// Çocuklar yanlışlıkla girmesin diye basılı tutarak açılır.
+let holdTimer = null;
+const link = $('parentLink');
+link.addEventListener('pointerdown', () => { holdTimer = setTimeout(openParent, 1200); });
+['pointerup', 'pointerleave', 'pointercancel'].forEach((ev) => link.addEventListener(ev, () => clearTimeout(holdTimer)));
+link.addEventListener('contextmenu', (e) => e.preventDefault());
+
+$('sendReports').onclick = () => {
+  const body = reportText();
+  if (!body) { $('parentMsg').textContent = 'Önce bozuk bir sesi 🚩 ile işaretle.'; return; }
+  const url = `${REPO_URL}/issues/new?title=${encodeURIComponent('Bozuk ses bildirimi')}&body=${encodeURIComponent(body)}`;
+  window.open(url, '_blank', 'noopener');
+  $('parentMsg').textContent = 'GitHub açıldı. "Submit new issue" de, sonra buraya dönüp Temizle\'ye bas.';
+};
+
+$('copyReports').onclick = async () => {
+  const body = reportText();
+  if (!body) { $('parentMsg').textContent = 'Önce bozuk bir sesi 🚩 ile işaretle.'; return; }
+  try { await navigator.clipboard.writeText(body); $('parentMsg').textContent = 'Kopyalandı.'; }
+  catch { $('parentMsg').textContent = 'Kopyalanamadı. Metni elle seçip kopyala.'; }
+};
+
+$('clearReports').onclick = () => { saveReports([]); renderParent(); $('parentMsg').textContent = 'Temizlendi.'; };
 
 /* ---------- Efekt ---------- */
 function burst(emoji) {

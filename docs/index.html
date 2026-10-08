@@ -27,6 +27,7 @@
       <div class="mascot" id="mascot">🐰🎀</div>
       <button id="startBtn" class="big-btn">Merhaba de! 👋</button>
       <div class="topic-grid" id="topicGrid"></div>
+      <button id="parentLink" class="parent-link" aria-label="Ebeveyn ekranı (basılı tut)">👪 Ebeveyn · basılı tut</button>
     </section>
 
     <!-- Konu ekranı -->
@@ -48,6 +49,7 @@
         </button>
         <button class="round-btn nav" id="nextCard" aria-label="Sonraki">▶️</button>
       </div>
+      <button class="flag-btn" id="flagLearn" aria-label="Sesi bildir">🚩 Ses bozuk</button>
       <div class="dots" id="dots"></div>
     </section>
 
@@ -56,6 +58,22 @@
       <div class="progress" id="progress"></div>
       <button class="big-btn listen" id="listenBtn">🔊 Dinle</button>
       <div class="choices" id="choices"></div>
+      <button class="flag-btn" id="flagGame" aria-label="Sesi bildir">🚩 Ses bozuk</button>
+    </section>
+
+    <!-- Ebeveyn: ses kontrolü ve bildirimler -->
+    <section id="parent" class="screen top" hidden>
+      <h2>Ses kontrolü</h2>
+      <p class="note">Dinle, bozuk olanı 🚩 ile işaretle. Aşağıdaki listeden GitHub'a gönderebilirsin.</p>
+      <ul class="clip-list" id="clipList"></ul>
+      <h2>Bildirimler (<span id="reportCount">0</span>)</h2>
+      <ul class="clip-list" id="reportList"></ul>
+      <div class="parent-actions">
+        <button class="big-btn" id="sendReports">📨 GitHub'a gönder</button>
+        <button class="big-btn alt" id="copyReports">📋 Kopyala</button>
+        <button class="big-btn gray" id="clearReports">🗑️ Temizle</button>
+      </div>
+      <p class="note" id="parentMsg" role="status"></p>
     </section>
 
     <!-- Sonuç -->
