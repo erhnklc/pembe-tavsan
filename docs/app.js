@@ -99,7 +99,6 @@ function speakFallback(text) {
     setTimeout(() => speechSynthesis.speak(u), delay);
   };
   say(0);
-  say(900);
 }
 
 function playFile(name) {
@@ -185,6 +184,7 @@ const step = (d) => {
 $('nextCard').onclick = () => step(1);
 $('prevCard').onclick = () => step(-1);
 $('wordCard').onclick = () => playWord(topic.items[cardIndex]);
+$('repeatLearn').onclick = () => playWord(topic.items[cardIndex]);
 
 /* ---------- Oyun ---------- */
 const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[0]).map((p) => p[1]);
@@ -206,6 +206,7 @@ function nextRound() {
   if (game.round >= game.picked.length) return finishGame();
   current = game.picked[game.round];
   game.missed = false;
+  $('promptWord').textContent = current.en;
   const others = shuffle(topic.items.filter((i) => i.id !== current.id)).slice(0, 2);
   const options = shuffle([current, ...others]);
   const box = $('choices');

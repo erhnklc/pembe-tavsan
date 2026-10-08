@@ -188,3 +188,20 @@ main {
 .clip-list li button { background: var(--pink-50); border-radius: 12px; font-size: 22px; padding: 6px 12px; }
 .parent-actions { display: grid; gap: 10px; width: 100%; justify-items: center; }
 .big-btn.gray { background: #adb5bd; box-shadow: 0 8px 0 rgba(0, 0, 0, .15); }
+
+/* Oyun: yazılı kelime ve başparmakla kolay basılan büyük dinle butonu */
+#game { justify-content: flex-start; padding-top: 4px; gap: 14px; }
+.prompt-word {
+  font-size: clamp(44px, 14vw, 72px); font-weight: 700; color: var(--pink-700);
+  line-height: 1.1; min-height: 1.1em; text-shadow: 0 3px 0 rgba(255, 255, 255, .9);
+}
+.listen-dock {
+  margin-top: auto; position: sticky; bottom: 0; width: 100%;
+  display: flex; justify-content: center;
+  padding: 14px 0 max(10px, env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--pink-50) 35%);
+}
+.listen-dock .big-btn, #repeatLearn {
+  min-height: 76px; font-size: clamp(24px, 6.5vw, 32px); max-width: 520px;
+}
+#repeatLearn { width: 100%; }
