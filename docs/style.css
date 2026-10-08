@@ -47,7 +47,7 @@ button { font: inherit; color: inherit; cursor: pointer; border: 0; }
 }
 .topbar h1 {
   flex: 1; margin: 0; text-align: center;
-  font-size: clamp(22px, 5vw, 32px); color: var(--pink-700);
+  font-size: clamp(30px, 8vw, 42px); color: var(--pink-700); line-height: 1.1;
 }
 .stars {
   min-width: 70px; text-align: center; font-weight: 700;
@@ -103,10 +103,10 @@ main {
 .topic-emoji { font-size: clamp(90px, 28vw, 150px); animation: bob 2.4s ease-in-out infinite; }
 
 /* Öğren */
-.card-wrap { display: flex; align-items: center; gap: 8px; width: 100%; }
+.card-wrap { display: flex; align-items: center; gap: 12px; width: 100%; }
 .word-card {
   flex: 1; background: var(--card); border-radius: 36px; padding: 24px 12px;
-  box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 6px;
+  box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 14px;
   min-height: min(50vh, 400px); justify-content: center;
 }
 .word-card:active { transform: translateY(4px); }
@@ -129,7 +129,7 @@ main {
 /* Oyun */
 .progress { font-size: 28px; letter-spacing: 4px; }
 .choices {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; width: 100%;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; width: 100%;
 }
 .choice {
   background: #fff; border-radius: 28px; box-shadow: var(--shadow);
@@ -238,7 +238,7 @@ main {
 /* Düzen: içerik ortada, "Tekrar dinle" her zaman en altta */
 .stage {
   flex: 1; width: 100%; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 16px;
+  align-items: center; justify-content: center; gap: clamp(22px, 4.5vh, 40px);
 }
 .listen-dock {
   width: 100%; display: flex; justify-content: center;
@@ -278,3 +278,19 @@ main {
   100% { transform: rotate(0) scale(.95); }
 }
 @keyframes slotPop { 0% { transform: scale(.2) rotate(-25deg); } 100% { transform: scale(1) rotate(0); } }
+
+/* Ferah dizilim */
+.progress { margin-bottom: 4px; }
+.flag-btn { margin-top: 6px; }
+.dots { margin-top: 4px; }
+.hint { margin-top: 8px; }
+
+/* Kısa ekranlı telefonlar: kaydırma gerektirmesin */
+@media (max-height: 700px) {
+  .word-card { min-height: 38vh; padding: 12px 10px; gap: 8px; }
+  .visual { font-size: clamp(70px, 22vw, 110px); }
+  .visual .swatch { width: clamp(80px, 24vw, 120px); height: clamp(80px, 24vw, 120px); }
+  .visual .digit { font-size: clamp(70px, 22vw, 120px); }
+  .stage { gap: 16px; }
+  #repeatLearn, .listen-dock .big-btn { min-height: 64px; }
+}

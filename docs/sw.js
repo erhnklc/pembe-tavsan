@@ -1,5 +1,5 @@
 // Uygulama kabuğunu ve sesleri önbelleğe alır, böylece internetsiz de çalışır.
-const CACHE = 'pembe-tavsan-v6';
+const CACHE = 'pembe-tavsan-v7';
 const FILES = [
   './', 'index.html', 'style.css', 'app.js', 'manifest.webmanifest', 'icon.svg',
   'audio/hosgeldin.mp3', 'audio/aferin.mp3',
