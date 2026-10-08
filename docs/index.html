@@ -18,7 +18,7 @@
   <header class="topbar">
     <button id="backBtn" class="round-btn" aria-label="Geri" hidden>⬅️</button>
     <h1 id="title">Pembe Tavşan</h1>
-    <div class="stars" aria-label="Yıldızlar">⭐ <span id="starCount">0</span></div>
+    <div class="stars" aria-label="Yıldızlar"><span class="kawaii sm" id="starIcon"></span><span id="starCount">0</span></div>
   </header>
 
   <main>
@@ -39,27 +39,33 @@
 
     <!-- Öğren -->
     <section id="learn" class="screen" hidden>
-      <div class="card-wrap">
-        <button class="round-btn nav" id="prevCard" aria-label="Önceki">◀️</button>
-        <button class="word-card" id="wordCard" aria-label="Kelimeyi dinle">
-          <div class="visual" id="learnVisual"></div>
-          <div class="en" id="learnEn"></div>
-          <div class="tr" id="learnTr"></div>
-          <div class="hint">🔊 Dokun ve dinle</div>
-        </button>
-        <button class="round-btn nav" id="nextCard" aria-label="Sonraki">▶️</button>
+      <div class="stage">
+        <div class="card-wrap">
+          <button class="round-btn nav" id="prevCard" aria-label="Önceki">◀️</button>
+          <button class="word-card" id="wordCard" aria-label="Kelimeyi dinle">
+            <div class="visual" id="learnVisual"></div>
+            <div class="en" id="learnEn"></div>
+            <div class="tr" id="learnTr"></div>
+            <div class="hint">🔊 Dokun ve dinle</div>
+          </button>
+          <button class="round-btn nav" id="nextCard" aria-label="Sonraki">▶️</button>
+        </div>
+        <div class="dots" id="dots"></div>
+        <button class="flag-btn" id="flagLearn" aria-label="Sesi bildir">🚩 Ses bozuk</button>
       </div>
-      <button class="big-btn listen" id="repeatLearn">🔊 Tekrar dinle</button>
-      <div class="dots" id="dots"></div>
-      <button class="flag-btn" id="flagLearn" aria-label="Sesi bildir">🚩 Ses bozuk</button>
+      <div class="listen-dock">
+        <button class="big-btn listen" id="repeatLearn">🔊 Tekrar dinle</button>
+      </div>
     </section>
 
     <!-- Oyun -->
     <section id="game" class="screen" hidden>
-      <div class="progress" id="progress"></div>
-      <div class="prompt-word" id="promptWord"></div>
-      <div class="choices" id="choices"></div>
-      <button class="flag-btn" id="flagGame" aria-label="Sesi bildir">🚩 Ses bozuk</button>
+      <div class="stage">
+        <div class="progress" id="progress"></div>
+        <div class="prompt-word" id="promptWord"></div>
+        <div class="choices" id="choices"></div>
+        <button class="flag-btn" id="flagGame" aria-label="Sesi bildir">🚩 Ses bozuk</button>
+      </div>
       <div class="listen-dock">
         <button class="big-btn listen" id="listenBtn">🔊 Tekrar dinle</button>
       </div>

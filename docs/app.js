@@ -73,6 +73,55 @@ let game = null;
 let current = null;
 let player = null;
 
+
+/* ---------- Şirin yıldız ve kalpler (yüzlü, yanaklı) ---------- */
+const FACE = '<ellipse cx="41" cy="52" rx="3.6" ry="4.6" fill="#7a2a52"/><ellipse cx="59" cy="52" rx="3.6" ry="4.6" fill="#7a2a52"/>' +
+  '<circle cx="42.2" cy="50.4" r="1.3" fill="#fff"/><circle cx="60.2" cy="50.4" r="1.3" fill="#fff"/>' +
+  '<path d="M45 60 q5 5.5 10 0" stroke="#7a2a52" stroke-width="3" fill="none" stroke-linecap="round"/>' +
+  '<circle cx="33" cy="60" r="5.5" fill="#ff8fb8" opacity=".55"/><circle cx="67" cy="60" r="5.5" fill="#ff8fb8" opacity=".55"/>';
+
+function starSVG(size = 44) {
+  return `<svg class="kawaii" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">` +
+    '<path d="M50 11 L61 37 L89 39 L67 57 L74 85 L50 70 L26 85 L33 57 L11 39 L39 37 Z" fill="#ffd84d" stroke="#ffd84d" stroke-width="12" stroke-linejoin="round"/>' +
+    '<path d="M50 11 L61 37 L89 39 L67 57 L74 85 L50 70 L26 85 L33 57 L11 39 L39 37 Z" fill="none" stroke="#ffb703" stroke-width="3" stroke-linejoin="round" opacity=".35" transform="translate(0 2)"/>' +
+    '<ellipse cx="34" cy="31" rx="5" ry="3" fill="#fff" opacity=".8" transform="rotate(-30 34 31)"/>' + FACE + '</svg>';
+}
+
+function heartSVG(kind = 'full', size = 44) {
+  const body = 'M50 88 C8 60 4 30 27 21 C40 16 48 24 50 31 C52 24 60 16 73 21 C96 30 92 60 50 88 Z';
+  if (kind === 'empty') {
+    return `<svg class="kawaii" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">` +
+      `<path d="${body}" fill="#fff" fill-opacity=".75" stroke="#ffb3d1" stroke-width="6" stroke-dasharray="3 9" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  }
+  return `<svg class="kawaii" width="${size}" height="${size}" viewBox="0 0 100 100" aria-hidden="true">` +
+    `<path d="${body}" fill="#ff7eb6" stroke="#ff7eb6" stroke-width="6" stroke-linejoin="round"/>` +
+    '<ellipse cx="29" cy="33" rx="6" ry="3.5" fill="#fff" opacity=".8" transform="rotate(-35 29 33)"/>' + FACE + '</svg>';
+}
+
+/* ---------- Yanlış cevap sesi: yumuşak, iki notalık "bu-bum" ---------- */
+let audioCtx = null;
+function playWrong() {
+  try {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    audioCtx = audioCtx || new AC();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const t0 = audioCtx.currentTime + 0.02;
+    [[392, 0], [311, 0.2]].forEach(([freq, at]) => {
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(0.0001, t0 + at);
+      gain.gain.exponentialRampToValueAtTime(0.18, t0 + at + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.0001, t0 + at + 0.32);
+      osc.connect(gain).connect(audioCtx.destination);
+      osc.start(t0 + at);
+      osc.stop(t0 + at + 0.34);
+    });
+  } catch { /* ses desteklenmiyorsa sessiz geç */ }
+}
+
 /* ---------- Kayıt (yıldızlar) ---------- */
 function loadStars() {
   try { return Number(localStorage.getItem('stars')) || 0; } catch { return 0; }
@@ -81,7 +130,7 @@ function saveStars(n) {
   try { localStorage.setItem('stars', String(n)); } catch { /* özel pencere vb. */ }
 }
 let totalStars = loadStars();
-const renderStars = () => { $('starCount').textContent = totalStars; };
+const renderStars = () => { $('starIcon').innerHTML = starSVG(30); $('starCount').textContent = totalStars; };
 
 /* ---------- Ses ---------- */
 function stopAudio() {
@@ -137,7 +186,7 @@ function visualHTML(item) {
   const v = item.v;
   if (typeof v === 'string') return `<div class="visual">${v}</div>`;
   if (v.color) return `<div class="visual"><span class="swatch" style="background:${v.color}"></span></div>`;
-  const dots = '⭐'.repeat(v.digit);
+  const dots = starSVG(22).repeat(v.digit);
   return `<div class="visual"><span class="digit">${v.digit}</span><span class="count">${dots}</span></div>`;
 }
 
@@ -212,15 +261,19 @@ const shuffle = (a) => a.map((x) => [Math.random(), x]).sort((p, q) => p[0] - q[
 
 function startGame() {
   stopAudio();
-  game = { round: 0, stars: 0, picked: shuffle(topic.items).slice(0, ROUNDS), missed: false };
+  game = { round: 0, stars: 0, results: [], picked: shuffle(topic.items).slice(0, ROUNDS), missed: false };
   go('game');
   nextRound();
 }
 
-function renderProgress() {
+function renderProgress(pop = false) {
   const total = game.picked.length;
-  $('progress').textContent = Array.from({ length: total }, (_, i) =>
-    i < game.stars ? '⭐' : (i < game.round ? '💔' : '🤍')).join('');
+  // ilk denemede bilinen: yıldız; ikinci denemede bilinen: kalp; sıradaki: boş kalp
+  $('progress').innerHTML = Array.from({ length: total }, (_, i) => {
+    const done = i < game.results.length;
+    const html = !done ? heartSVG('empty') : (game.results[i] ? starSVG() : heartSVG('full'));
+    return `<span class="slot${pop && done && i === game.results.length - 1 ? ' pop' : ''}">${html}</span>`;
+  }).join('');
 }
 
 function nextRound() {
@@ -246,20 +299,21 @@ function nextRound() {
 }
 
 function choose(btn, opt) {
-  if (btn.classList.contains('good')) return;
+  if (btn.classList.contains('good') || btn.classList.contains('bad') || btn.classList.contains('dim')) return;
   if (opt.id === current.id) {
     btn.classList.add('good');
     if (!game.missed) game.stars += 1;
+    game.results.push(!game.missed);
     burst('💖');
     playFile('aferin');
     game.round += 1;
-    renderProgress();
+    renderProgress(true);
     setTimeout(nextRound, 1500);
   } else {
     game.missed = true;
     btn.classList.add('bad');
-    setTimeout(() => btn.classList.remove('bad'), 450);
-    setTimeout(() => playWord(current), 500);
+    playWrong();
+    setTimeout(() => { btn.classList.remove('bad'); btn.classList.add('dim'); }, 650);
   }
 }
 
@@ -269,7 +323,7 @@ function finishGame() {
   totalStars += game.stars;
   saveStars(totalStars);
   renderStars();
-  $('resultStars').textContent = '⭐'.repeat(game.stars) || '🌸';
+  $('resultStars').innerHTML = game.stars ? starSVG(56).repeat(game.stars) : heartSVG('full', 56);
   go('result');
   burst('🎀');
   burst('💖');
@@ -376,14 +430,14 @@ $('copyReports').onclick = async () => {
 $('clearReports').onclick = () => { saveReports([]); renderParent(); $('parentMsg').textContent = 'Temizlendi.'; };
 
 /* ---------- Efekt ---------- */
-function burst(emoji) {
+function burst() {
   const fx = $('fx');
-  for (let i = 0; i < 16; i += 1) {
+  for (let i = 0; i < 14; i += 1) {
     const s = document.createElement('span');
-    s.textContent = emoji;
+    s.innerHTML = i % 3 === 0 ? starSVG(40) : heartSVG('full', 40);
     s.style.left = `${Math.random() * 100}%`;
     s.style.animationDelay = `${Math.random() * 0.4}s`;
-    s.style.fontSize = `${24 + Math.random() * 24}px`;
+    s.style.transform = `scale(${0.6 + Math.random() * 0.7})`;
     fx.appendChild(s);
     setTimeout(() => s.remove(), 2400);
   }

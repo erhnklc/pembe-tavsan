@@ -107,7 +107,7 @@ main {
 .word-card {
   flex: 1; background: var(--card); border-radius: 36px; padding: 24px 12px;
   box-shadow: var(--shadow); display: flex; flex-direction: column; align-items: center; gap: 6px;
-  min-height: min(62vh, 440px); justify-content: center;
+  min-height: min(50vh, 400px); justify-content: center;
 }
 .word-card:active { transform: translateY(4px); }
 .visual { font-size: clamp(96px, 30vw, 170px); line-height: 1.1; }
@@ -117,7 +117,7 @@ main {
 }
 .visual .digit { font-weight: 700; color: var(--pink-500); font-size: clamp(100px, 32vw, 180px); }
 .visual .count { display: block; font-size: clamp(20px, 5vw, 30px); letter-spacing: 2px; }
-.en { font-size: clamp(40px, 12vw, 64px); font-weight: 700; color: var(--pink-700); }
+.en { font-size: clamp(32px, 9vw, 46px); font-weight: 700; color: var(--pink-700); }
 .tr { font-size: clamp(20px, 5vw, 28px); opacity: .85; }
 .hint { margin-top: 6px; font-size: 16px; opacity: .6; }
 .round-btn.nav { flex: none; width: 48px; height: 48px; }
@@ -142,7 +142,6 @@ main {
 .choice .visual .count { display: none; }
 .choice:active { transform: translateY(4px); }
 .choice.good { background: #d3f9d8; animation: pop .4s; }
-.choice.bad { background: #ffe3e3; animation: shake .4s; }
 
 #result h2 { margin: 0; font-size: clamp(34px, 9vw, 52px); color: var(--pink-700); }
 .result-stars { font-size: clamp(40px, 11vw, 64px); }
@@ -190,17 +189,16 @@ main {
 .big-btn.gray { background: #adb5bd; box-shadow: 0 8px 0 rgba(0, 0, 0, .15); }
 
 /* Oyun: her şey ekranın tam ortasında */
-#game { justify-content: center; gap: 16px; }
+
 .prompt-word {
   display: inline-flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap;
-  min-height: 1.4em; padding: 8px 28px 10px;
-  font-size: clamp(40px, 12vw, 64px); font-weight: 600; letter-spacing: .06em;
+  min-height: 1.3em; padding: 6px 24px 8px;
+  font-size: clamp(26px, 7.5vw, 38px); font-weight: 600; letter-spacing: .05em;
   color: #fff; background: linear-gradient(135deg, #b86bff, #ff5fa2);
   border: 5px solid #fff; border-radius: 999px;
   box-shadow: 0 8px 0 rgba(120, 50, 190, .28);
 }
-.en .listen-dock { width: 100%; display: flex; justify-content: center; }
-.listen-dock .big-btn, #repeatLearn {
+.en .listen-dock .big-btn, #repeatLearn {
   min-height: 76px; font-size: clamp(24px, 6.5vw, 32px); max-width: 520px;
 }
 #repeatLearn { width: 100%; }
@@ -236,3 +234,47 @@ main {
   50% { filter: hue-rotate(180deg); transform: scale(1.18); }
   100% { filter: hue-rotate(360deg); transform: scale(1); }
 }
+
+/* Düzen: içerik ortada, "Tekrar dinle" her zaman en altta */
+.stage {
+  flex: 1; width: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 16px;
+}
+.listen-dock {
+  width: 100%; display: flex; justify-content: center;
+  position: sticky; bottom: 0; margin-top: auto;
+  padding: 12px 0 max(10px, env(safe-area-inset-bottom));
+  background: linear-gradient(to bottom, transparent, var(--pink-50) 40%);
+}
+
+/* Şirin yıldız ve kalpler */
+.kawaii { display: block; filter: drop-shadow(0 3px 0 rgba(214, 51, 108, .22)); }
+.kawaii.sm { display: inline-block; vertical-align: middle; margin-right: 4px; }
+.stars { display: inline-flex; align-items: center; }
+.progress { display: flex; gap: 6px; justify-content: center; letter-spacing: 0; }
+.slot { display: inline-flex; }
+.slot.pop { animation: slotPop .5s cubic-bezier(.3, 1.6, .5, 1); }
+.result-stars { display: flex; gap: 6px; justify-content: center; flex-wrap: wrap; }
+.visual .count { display: flex; flex-wrap: wrap; justify-content: center; gap: 2px; margin-top: 6px; }
+#fx span { line-height: 0; }
+
+/* Yanlış kutu: yumuşakça sallanır, pembe halka alır, sonra silikleşir */
+.choice.bad {
+  background: #fff0f5; box-shadow: 0 0 0 5px #ffc2dc, 0 8px 0 rgba(214, 51, 108, .15);
+  animation: wobble .65s ease-in-out;
+}
+.choice.dim {
+  opacity: .42; filter: saturate(.55); transform: scale(.92); box-shadow: none;
+  transition: opacity .3s, transform .3s, filter .3s; pointer-events: none;
+}
+
+@keyframes wobble {
+  0% { transform: rotate(0) scale(1); }
+  15% { transform: rotate(-7deg) translateX(-5px) scale(1.04); }
+  30% { transform: rotate(6deg) translateX(5px) scale(1.04); }
+  45% { transform: rotate(-4deg) translateX(-3px); }
+  60% { transform: rotate(3deg) translateX(2px); }
+  80% { transform: rotate(-1.5deg); }
+  100% { transform: rotate(0) scale(.95); }
+}
+@keyframes slotPop { 0% { transform: scale(.2) rotate(-25deg); } 100% { transform: scale(1) rotate(0); } }
